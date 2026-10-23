@@ -1,0 +1,28 @@
+# Fail the pull request unless the artifact is certified at silver from the
+# publisher named here.
+#
+# Pin `workrr-trust/certify` to a full 40-character commit SHA once PR #3 is
+# merged and tagged. Do not use a moving branch ref. This job does not sign.
+# Grant contents: read only; do not grant id-token or attestations.
+name: workrr
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: workrr
+        uses: workrr-trust/certify@1318a51bd31a666f3406e2e74a57d7d0d6505456
+        with:
+          path: skills/my-skill
+          bundle: certificate.sigstore.json
+          source: $owner/$repo
+          level: silver
